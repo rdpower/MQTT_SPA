@@ -1,0 +1,63 @@
+climate:
+  - platform: mqtt
+    name: "Spa Pool"
+    current_temperature_topic: "spa/status"
+    current_temperature_template: "{{ value_json.t }}"
+    mode_command_topic: "spa/mode"
+    mode_state_topic: "spa/status"
+    modes: 
+     - 'auto'
+     - 'off'
+     - 'heat'
+    mode_state_template: "{{value_json.m}}"
+    temperature_command_topic: "spa/tempset"
+    temperature_state_topic: "spa/status"
+    temperature_state_template: "{{ value_json.setTemp }}"
+    min_temp: 20
+    retain: true
+    max_temp: 41
+    initial: 38.5
+    temp_step: 0.5
+    precision: 0.1
+    
+sensor:
+  - platform: mqtt
+    name: "SpaPower"
+    state_topic: "spa/status"
+    value_template: "{{value_json.p}}"
+    unit_of_measurement: 'W'
+  - platform: integration
+    name: "SpaEnergy"
+    source: sensor.SpaPower
+    unit_prefix: k
+    unit_time: h
+    round: 2
+    
+    
+    
+ input_number:
+  spaontime:
+    name: On Time
+    mode: box
+    initial: 9 #9AM
+    min: 0
+    max: 23
+  spaofftime:
+    name: Off Time
+    mode: box
+    initial: 20.5 #8:30PM
+    min: 0
+    max: 23
+  spatime:
+    name: Spa Time
+    mode: box
+    initial: 19.5 #7:30PM
+    min: 0
+    max: 23
+  sparuntime:
+    name: Run Time
+    mode: slider
+    initial: 7200 #2Hours
+    min: 1800 #Half hour
+    step: 1800
+    max: 18000 #5hours
